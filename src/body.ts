@@ -3,7 +3,7 @@ import type { Links, Meta, Resource } from "./common.js";
 export type JsonApiError = {
     id?: string;
     links?: Links<"about" | "type">;
-    status: string;
+    status?: string;
     code?: string;
     title?: string;
     detail?: string;

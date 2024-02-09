@@ -11,23 +11,39 @@ declare module "koa" {
 }
 
 export class InputValidationError extends Error {
+    public readonly status: number;
+
     public constructor(
         message: string,
-        public readonly status: number,
         public readonly errors: JsonApiError[],
     ) {
         super(message);
+        const statusCodes = new Set(
+            errors
+                .map((error) => error.status)
+                .filter((value): value is string => value !== undefined),
+        );
+
+        if (statusCodes.size === 1) {
+            this.status = parseInt(statusCodes.values().next().value);
+            return;
+        }
+
+        this.status = 400;
     }
 }
 
-export class ZodValidationError extends InputValidationError {
+class JsonApiZodErrorParams {
     public constructor(
-        message: string,
-        public readonly status: number,
-        errors: z.ZodIssue[],
-        source: "query" | "body",
-    ) {
-        super(message, status, ZodValidationError.toJsonApiErrors(errors, source));
+        public readonly code: string,
+        public readonly detail?: string,
+        public readonly status?: number,
+    ) {}
+}
+
+export class ZodValidationError extends InputValidationError {
+    public constructor(message: string, errors: z.ZodIssue[], source: "query" | "body") {
+        super(message, ZodValidationError.toJsonApiErrors(errors, source));
     }
 
     private static toJsonApiErrors(
@@ -35,36 +51,71 @@ export class ZodValidationError extends InputValidationError {
         errorSource: "query" | "body",
     ): JsonApiError[] {
         return errors.map((error): JsonApiError => {
-            let source: JsonApiError["source"];
+            const params =
+                error.code === "custom" && error.params instanceof JsonApiZodErrorParams
+                    ? error.params
+                    : null;
+
             const { code, message, path, fatal, ...rest } = error;
-
-            if (errorSource === "query") {
-                if (path.length !== 1 || typeof path[0] !== "string") {
-                    throw new Error("Query parameters paths must be a single string");
-                }
-
-                source = {
-                    parameter: path[0],
-                };
-            } else {
-                source = {
-                    pointer: `/${path.join("/")}`,
-                };
-            }
+            const meta = params
+                ? Object.fromEntries(Object.entries(rest).filter(([key]) => key !== "params"))
+                : rest;
 
             return {
-                status: errorSource === "query" ? "400" : "422",
-                code,
+                status: params?.status?.toString() ?? (errorSource === "query" ? "400" : "422"),
+                code: params?.code ?? code,
                 title: message,
-                source,
-                meta: Object.keys(rest).length > 0 ? rest : undefined,
+                detail: params?.detail,
+                source: ZodValidationError.getSource(errorSource, path),
+                meta: Object.keys(meta).length > 0 ? meta : undefined,
             };
         });
     }
+
+    private static getSource(
+        errorSource: "query" | "body",
+        path: (string | number)[],
+    ): JsonApiError["source"] {
+        if (errorSource === "body") {
+            return { pointer: `/${path.join("/")}` };
+        }
+
+        if (path.length !== 1 || typeof path[0] !== "string") {
+            throw new Error("Query parameters paths must be a single string");
+        }
+
+        return { parameter: path[0] };
+    }
 }
 
+const fixedIdSchema = <TId extends string>(id: TId) =>
+    z.string().refine(
+        (value) => value === id,
+        (value) => ({
+            message: "ID mismatch",
+            params: new JsonApiZodErrorParams(
+                "id_mismatch",
+                `ID '${value}' does not match '${id}'`,
+                409,
+            ),
+        }),
+    ) as unknown as z.ZodType<TId>;
+
+const fixedTypeSchema = <TType extends string>(id: TType) =>
+    z.string().refine(
+        (value) => value === id,
+        (value) => ({
+            message: "Type mismatch",
+            params: new JsonApiZodErrorParams(
+                "type_mismatch",
+                `Type '${value}' does not match '${id}'`,
+                409,
+            ),
+        }),
+    ) as unknown as z.ZodType<TType>;
+
 type ResourceIdentifierSchema<TType extends string> = z.ZodObject<{
-    type: z.ZodLiteral<TType>;
+    type: z.ZodType<TType>;
     id: z.ZodString;
 }>;
 
@@ -72,7 +123,7 @@ export const resourceIdentifierSchema = <TType extends string>(
     type: TType,
 ): ResourceIdentifierSchema<TType> =>
     z.object({
-        type: z.literal(type),
+        type: fixedTypeSchema(type),
         id: z.string(),
     });
 
@@ -93,20 +144,23 @@ export const relationship = <TData extends RelationshipDataSchema>(
     });
 
 type ParseDataRequestOptions<
+    TType extends string,
     TAttributesSchema extends z.SomeZodObject | undefined,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 > = {
-    type: string;
+    type: TType;
     attributesSchema: TAttributesSchema;
     relationshipsSchema?: TRelationshipsSchema;
 };
 
 type ParseDataRequestResult<
     TIdSchema extends z.ZodType<unknown>,
+    TType extends string,
     TAttributesSchema extends z.SomeZodObject | undefined,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 > = {
     id: z.output<TIdSchema>;
+    type: TType;
     attributes: TAttributesSchema extends z.SomeZodObject ? z.output<TAttributesSchema> : undefined;
     relationships: TRelationshipsSchema extends z.SomeZodObject
         ? z.output<TRelationshipsSchema>
@@ -115,18 +169,19 @@ type ParseDataRequestResult<
 
 const parseDataRequest = <
     TIdSchema extends z.ZodType<unknown>,
+    TType extends string,
     TAttributesSchema extends z.SomeZodObject,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 >(
     idSchema: TIdSchema,
     koaContext: Context,
-    options: ParseDataRequestOptions<TAttributesSchema, TRelationshipsSchema>,
-): ParseDataRequestResult<TIdSchema, TAttributesSchema, TRelationshipsSchema> => {
+    options: ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>,
+): ParseDataRequestResult<TIdSchema, TType, TAttributesSchema, TRelationshipsSchema> => {
     const parseResult = z
         .object({
             data: z.object({
                 id: idSchema as z.ZodType<unknown>,
-                type: z.literal(options.type),
+                type: fixedTypeSchema(options.type) as z.ZodType<unknown>,
                 attributes: options.attributesSchema
                     ? (options.attributesSchema as z.SomeZodObject)
                     : z.undefined(),
@@ -138,16 +193,12 @@ const parseDataRequest = <
         .safeParse(koaContext.request.body);
 
     if (!parseResult.success) {
-        throw new ZodValidationError(
-            "Validation of body failed",
-            422,
-            parseResult.error.errors,
-            "body",
-        );
+        throw new ZodValidationError("Validation of body failed", parseResult.error.errors, "body");
     }
 
     return {
         id: parseResult.data.data.id,
+        type: parseResult.data.data.type as TType,
         attributes: parseResult.data.data.attributes as TAttributesSchema extends z.SomeZodObject
             ? z.output<TAttributesSchema>
             : undefined,
@@ -159,50 +210,63 @@ const parseDataRequest = <
 };
 
 export type ParseCreateRequestOptions<
+    TType extends string,
     TAttributesSchema extends z.SomeZodObject | undefined,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
-> = ParseDataRequestOptions<TAttributesSchema, TRelationshipsSchema>;
+> = ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>;
 
 export type ParseCreateRequestResult<
+    TType extends string,
     TAttributesSchema extends z.SomeZodObject | undefined,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
-> = ParseDataRequestResult<z.ZodOptional<z.ZodString>, TAttributesSchema, TRelationshipsSchema> & {
+> = ParseDataRequestResult<
+    z.ZodOptional<z.ZodString>,
+    TType,
+    TAttributesSchema,
+    TRelationshipsSchema
+> & {
     id?: string;
 };
 
 export const parseCreateRequest = <
+    TType extends string,
     TAttributesSchema extends z.SomeZodObject,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 >(
     koaContext: Context,
-    options: ParseCreateRequestOptions<TAttributesSchema, TRelationshipsSchema>,
-): ParseCreateRequestResult<TAttributesSchema, TRelationshipsSchema> => {
+    options: ParseCreateRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>,
+): ParseCreateRequestResult<TType, TAttributesSchema, TRelationshipsSchema> => {
     return parseDataRequest(z.string().optional(), koaContext, options);
 };
 
 export type ParseUpdateRequestOptions<
+    TId extends string,
+    TType extends string,
     TAttributesSchema extends z.SomeZodObject,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
-> = ParseDataRequestOptions<TAttributesSchema, TRelationshipsSchema>;
+> = ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>;
 
 export type ParseUpdateRequestResult<
     TId extends string,
+    TType extends string,
     TAttributesSchema extends z.SomeZodObject,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
-> = ParseDataRequestResult<z.ZodLiteral<TId>, TAttributesSchema, TRelationshipsSchema> & {
+> = ParseDataRequestResult<z.ZodType<TId>, TType, TAttributesSchema, TRelationshipsSchema> & {
     id: TId;
 };
 
 export const parseUpdateRequest = <
     TId extends string,
+    TType extends string,
     TAttributesSchema extends z.SomeZodObject,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 >(
     id: TId,
+    type: TType,
     koaContext: Context,
-    options: ParseUpdateRequestOptions<TAttributesSchema, TRelationshipsSchema>,
-): ParseUpdateRequestResult<TId, TAttributesSchema, TRelationshipsSchema> => {
-    return parseDataRequest(z.literal(id), koaContext, options);
+    options: ParseUpdateRequestOptions<TId, TType, TAttributesSchema, TRelationshipsSchema>,
+): ParseUpdateRequestResult<TId, TType, TAttributesSchema, TRelationshipsSchema> => {
+    return parseDataRequest(fixedIdSchema(id), koaContext, options);
 };
 
 export type FieldSort<TSort extends string> = { field: TSort; order: "desc" | "asc" };
@@ -282,7 +346,7 @@ const processSort = <TSort extends string>(
 
     for (const field of parsedSort) {
         if (!allowedSortFields?.includes(field.field)) {
-            throw new InputValidationError("Invalid sort field", 400, [
+            throw new InputValidationError("Invalid sort field", [
                 {
                     status: "400",
                     code: "invalid_sort_field",
@@ -306,7 +370,6 @@ export const parseQuerySchema = <T extends z.ZodType<unknown>>(
     if (!parseResult.success) {
         throw new ZodValidationError(
             "Validation of query failed",
-            400,
             parseResult.error.errors,
             "query",
         );
