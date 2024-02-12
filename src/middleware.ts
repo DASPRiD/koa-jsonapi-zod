@@ -1,6 +1,7 @@
 import contentTypeUtil from "content-type";
 import { isHttpError } from "http-errors";
-import type { Context, Middleware } from "koa";
+import type { Context, Middleware, ParameterizedContext } from "koa";
+import { type JsonApiMediaType, getAcceptableMediaTypes } from "./accept.js";
 import { JsonApiBody, JsonApiErrorBody } from "./body.js";
 import { InputValidationError } from "./request.js";
 
@@ -9,15 +10,32 @@ type RequestMiddlewareOptions = {
      * List of paths to exclude, supports non-greedy wildcards (*) in any position
      */
     excludedPaths?: string[];
+
+    /**
+     * List of acceptable media type extensions
+     */
+    acceptableExtensions?: string[];
 };
 
-export const jsonApiRequestMiddleware = (options?: RequestMiddlewareOptions): Middleware => {
+type JsonApiState = {
+    jsonApi: {
+        acceptableTypes: JsonApiMediaType[];
+    };
+};
+
+export const jsonApiRequestMiddleware = (
+    options?: RequestMiddlewareOptions,
+): Middleware<JsonApiState> => {
     const excludeRegexp = options?.excludedPaths ? buildExcludeRegExp(options.excludedPaths) : null;
 
     return async (context, next) => {
         if (excludeRegexp?.test(context.path)) {
             return next();
         }
+
+        context.state.jsonApi = {
+            acceptableTypes: getAcceptableMediaTypes(context.get("Accept")),
+        };
 
         if (validateContentType(context)) {
             await next();
@@ -83,7 +101,7 @@ const validateContentType = (context: Context): boolean => {
         context.status = 415;
         context.body = new JsonApiErrorBody({
             status: "415",
-            code: "Unsupported Media Type",
+            code: "unsupported_media_type",
             title: "Unsupported Media Type",
             detail: `Unsupported media type '${parts.type}', use 'application/vnd.api+json'`,
         });
@@ -97,24 +115,45 @@ const validateContentType = (context: Context): boolean => {
         context.status = 415;
         context.body = new JsonApiErrorBody({
             status: "415",
-            code: "Unsupported Media Type",
+            code: "unsupported_media_type",
             title: "Unsupported Media Type",
             detail: `Unknown media type parameters: ${Object.keys(rest).join(", ")}`,
         });
+
+        return false;
     }
 
     return true;
 };
 
-const handleResponse = (context: Context): void => {
+const handleResponse = (context: ParameterizedContext<JsonApiState>): void => {
     if (!(context.body instanceof JsonApiBody)) {
+        return;
+    }
+
+    const appliedExtensions = context.body.options?.extensions;
+
+    const matchingTypes = context.state.jsonApi.acceptableTypes.filter((type) => {
+        return type.ext.every((extension) => appliedExtensions?.includes(extension));
+    });
+
+    if (matchingTypes.length === 0) {
+        context.status = 406;
+        context.body = new JsonApiErrorBody({
+            status: "406",
+            code: "not_acceptable",
+            title: "Not Acceptable",
+            detail: "No valid accept types provided, you must accept application/vnd.api+json",
+            meta: appliedExtensions ? { appliedExtensions } : undefined,
+        });
+
         return;
     }
 
     const parameters: Record<string, string> = {};
 
-    if (context.body.options?.extensions) {
-        parameters.ext = context.body.options.extensions.join(" ");
+    if (appliedExtensions) {
+        parameters.ext = appliedExtensions.join(" ");
     }
 
     if (context.body.options?.profiles) {

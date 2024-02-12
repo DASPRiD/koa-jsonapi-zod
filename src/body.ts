@@ -34,7 +34,7 @@ type TopLevelMembers = OptionalTopLevelMembers &
           }
     );
 
-type JsonApiBodyOptions = {
+export type JsonApiBodyOptions = {
     extensions?: string[];
     profiles?: string[];
 };

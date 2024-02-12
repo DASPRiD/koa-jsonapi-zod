@@ -32,6 +32,8 @@
   "module": "./dist/index.js",
   "scripts": {
     "build": "tsc",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "format": "biome format . --write",
     "check": "biome check . --apply"
   },
@@ -45,14 +47,19 @@
     "@types/koa": "^2.14.0",
     "@types/node": "^20.11.17",
     "@types/qs": "^6.9.11",
+    "@vitest/coverage-v8": "^1.2.2",
+    "c8": "^9.1.0",
+    "glob": "^10.3.10",
     "lefthook": "^1.6.1",
     "typescript": "^5.3.3",
+    "vitest": "^1.2.2",
     "zod": "^3.22.4"
   },
   "peerDependencies": {
     "zod": "^3.22.4"
   },
   "dependencies": {
+    "@hapi/accept": "^6.0.3",
     "content-type": "^1.0.5",
     "http-errors": "^2.0.0",
     "qs": "^6.11.2"

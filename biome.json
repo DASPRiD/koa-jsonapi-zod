@@ -9,6 +9,7 @@
             "commitlint.config.cjs",
             "release.config.cjs",
             "src/**/*",
+            "test/**/*",
             "examples/*/src/**/*"
         ]
     },
