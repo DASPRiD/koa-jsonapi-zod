@@ -29,15 +29,11 @@ export const jsonApiRequestMiddleware = (
     const excludeRegexp = options?.excludedPaths ? buildExcludeRegExp(options.excludedPaths) : null;
 
     return async (context, next) => {
-        if (excludeRegexp?.test(context.path)) {
-            return next();
-        }
-
         context.state.jsonApi = {
             acceptableTypes: getAcceptableMediaTypes(context.get("Accept")),
         };
 
-        if (validateContentType(context)) {
+        if (!excludeRegexp?.test(context.path) || validateContentType(context)) {
             await next();
         }
 
