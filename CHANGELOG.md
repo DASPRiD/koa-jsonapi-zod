@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.1.1...v1.2.0) (2024-03-02)
+
+
+### Features
+
+* **body:** allow body with only meta defined ([123a78e](https://github.com/dasprid/koa-jsonapi-zod/commit/123a78efa4050644e46c6bcc2812b8ff4852c750))
+
 ## [1.1.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.1.0...v1.1.1) (2024-03-02)
 
 
