@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.2.0...v1.3.0) (2024-03-02)
+
+
+### Features
+
+* process possible JSON:API responses on excluded paths ([bd273ac](https://github.com/dasprid/koa-jsonapi-zod/commit/bd273ac72c9c0a77d4e6d8116bcbb9a03db269e3))
+
 # [1.2.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.1.1...v1.2.0) (2024-03-02)
 
 
