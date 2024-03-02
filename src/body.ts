@@ -32,6 +32,9 @@ type TopLevelMembers = OptionalTopLevelMembers &
               errors: JsonApiError[];
               meta?: Meta;
           }
+        | {
+              meta: Meta;
+          }
     );
 
 export type JsonApiBodyOptions = {
