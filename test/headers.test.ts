@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { type Accept, parseAccept } from "../src/headers.js";
+import { AcceptParser } from "../src/accept.js";
+import type { Accept } from "../src/accept.js";
 
-describe("parseAccept", () => {
+describe("AcceptParser", () => {
     const validHeaders: [string, string, Accept][] = [
         ["empty", " \t ", [{ type: "*", subType: "*", parameters: {}, weight: 1, acceptExt: {} }]],
         [
@@ -126,7 +127,7 @@ describe("parseAccept", () => {
 
     for (const [name, header, expected] of validHeaders) {
         it(`should match ${name}`, () => {
-            const actual = parseAccept(header);
+            const actual = AcceptParser.parse(header);
             expect(actual).toEqual(expected);
         });
     }
@@ -153,7 +154,7 @@ describe("parseAccept", () => {
 
     for (const [name, header, expectedMessage] of invalidHeaders) {
         it(`should throw error on ${name}`, () => {
-            expect(() => parseAccept(header)).toThrow(expectedMessage);
+            expect(() => AcceptParser.parse(header)).toThrow(expectedMessage);
         });
     }
 });

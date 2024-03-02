@@ -8,7 +8,7 @@ type AcceptMediaType = {
     acceptExt: Record<string, string>;
 };
 
-type Accept = AcceptMediaType[];
+export type Accept = AcceptMediaType[];
 
 const asciiRange = (start: number, end: number): string => {
     let chars = "";
@@ -30,7 +30,7 @@ const QCHAR = `\t ${VCHAR} ${OBS_TEXT}`;
 
 type RawParameter = [string, string];
 
-class AcceptParser {
+export class AcceptParser {
     private static readonly default: AcceptMediaType = {
         type: "*",
         subType: "*",

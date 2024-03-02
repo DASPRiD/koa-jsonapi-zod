@@ -240,7 +240,6 @@ export const parseCreateRequest = <
 };
 
 export type ParseUpdateRequestOptions<
-    TId extends string,
     TType extends string,
     TAttributesSchema extends z.SomeZodObject,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
@@ -262,9 +261,8 @@ export const parseUpdateRequest = <
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 >(
     id: TId,
-    type: TType,
     koaContext: Context,
-    options: ParseUpdateRequestOptions<TId, TType, TAttributesSchema, TRelationshipsSchema>,
+    options: ParseUpdateRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>,
 ): ParseUpdateRequestResult<TId, TType, TAttributesSchema, TRelationshipsSchema> => {
     return parseDataRequest(fixedIdSchema(id), koaContext, options);
 };
