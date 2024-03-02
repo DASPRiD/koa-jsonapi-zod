@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.1.0...v1.1.1) (2024-03-02)
+
+
+### Bug Fixes
+
+* **request:** only require type passed in through options on update ([bbed64f](https://github.com/dasprid/koa-jsonapi-zod/commit/bbed64f7a777f957820a0f3e60be58cb3670fef4))
+
 # [1.1.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.0.0...v1.1.0) (2024-02-12)
 
 
