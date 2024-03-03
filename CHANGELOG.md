@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.3.1...v1.3.2) (2024-03-03)
+
+
+### Bug Fixes
+
+* **accept:** check for existence of ext and profile before splitting ([e72c212](https://github.com/dasprid/koa-jsonapi-zod/commit/e72c212f0186f9c591b3215f7294d4cde8079e2f))
+
 ## [1.3.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.3.0...v1.3.1) (2024-03-03)
 
 
