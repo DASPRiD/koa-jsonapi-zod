@@ -276,8 +276,8 @@ export const getAcceptableMediaTypes = (header: string): JsonApiMediaType[] => {
         }
 
         accept.push({
-            ext: ext.split(" "),
-            profile: profile.split(" "),
+            ext: ext ? ext.split(" ") : [],
+            profile: profile ? profile.split(" ") : [],
         });
         return accept;
     }, []);
