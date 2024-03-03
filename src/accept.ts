@@ -271,7 +271,7 @@ export const getAcceptableMediaTypes = (header: string): JsonApiMediaType[] => {
 
         const { ext, profile, ...rest } = mediaType.parameters;
 
-        if (Object.keys(rest).length === 0) {
+        if (Object.keys(rest).length !== 0) {
             return accept;
         }
 
