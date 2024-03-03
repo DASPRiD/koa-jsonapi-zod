@@ -135,13 +135,19 @@ const handleResponse = (context: ParameterizedContext<JsonApiState>): void => {
 
     if (matchingTypes.length === 0) {
         context.status = 406;
-        context.body = new JsonApiErrorBody({
-            status: "406",
-            code: "not_acceptable",
-            title: "Not Acceptable",
-            detail: "No valid accept types provided, you must accept application/vnd.api+json",
-            meta: appliedExtensions ? { appliedExtensions } : undefined,
-        });
+        context.set("Content-Type", contentTypeUtil.format({ type: "application/vnd.api+json" }));
+        context.body = {
+            jsonapi: { version: "1.1" },
+            errors: [
+                {
+                    status: "406",
+                    code: "not_acceptable",
+                    title: "Not Acceptable",
+                    detail: "No valid accept types provided, you must accept application/vnd.api+json",
+                    meta: appliedExtensions ? { appliedExtensions } : undefined,
+                },
+            ],
+        };
 
         return;
     }
