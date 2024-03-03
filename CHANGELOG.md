@@ -1,3 +1,11 @@
+## [1.3.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.3.0...v1.3.1) (2024-03-03)
+
+
+### Bug Fixes
+
+* **accept:** drop media types which have unknown parameters ([6602216](https://github.com/dasprid/koa-jsonapi-zod/commit/66022168773d71064360d0cda36c3b674d456731))
+* **middleware:** properly format 406 response ([a168133](https://github.com/dasprid/koa-jsonapi-zod/commit/a1681334f65630a940fb02f5023e7afb0a73074c))
+
 # [1.3.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.2.0...v1.3.0) (2024-03-02)
 
 
