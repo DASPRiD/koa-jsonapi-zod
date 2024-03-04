@@ -17,6 +17,7 @@ export {
     type Sort,
     ZodValidationError,
 } from "./request.js";
+export { methodNotAllowedHandler } from "./router.js";
 export {
     type EntityRelationships,
     type EntityRelationship,
