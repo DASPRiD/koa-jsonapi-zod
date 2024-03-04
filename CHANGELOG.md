@@ -1,3 +1,11 @@
+# [1.4.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.3.2...v1.4.0) (2024-03-04)
+
+
+### Features
+
+* add methodNotAllowedHandler to remove downstream boilerplate ([8d55ac5](https://github.com/dasprid/koa-jsonapi-zod/commit/8d55ac5a3eab0bc322de612f461692ae15d52470))
+* move content-type check to body parser ([e7180b6](https://github.com/dasprid/koa-jsonapi-zod/commit/e7180b65b2dcecb9f2c51842542d99fd275a902f))
+
 ## [1.3.2](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.3.1...v1.3.2) (2024-03-03)
 
 
