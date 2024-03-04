@@ -1,3 +1,4 @@
+import contentTypeUtil from "content-type";
 import type { Context } from "koa";
 import qs from "qs";
 import z from "zod";
@@ -101,14 +102,14 @@ const fixedIdSchema = <TId extends string>(id: TId) =>
         }),
     ) as unknown as z.ZodType<TId>;
 
-const fixedTypeSchema = <TType extends string>(id: TType) =>
+const fixedTypeSchema = <TType extends string>(type: TType) =>
     z.string().refine(
-        (value) => value === id,
+        (value) => value === type,
         (value) => ({
             message: "Type mismatch",
             params: new JsonApiZodErrorParams(
                 "type_mismatch",
-                `Type '${value}' does not match '${id}'`,
+                `Type '${value}' does not match '${type}'`,
                 409,
             ),
         }),
@@ -167,6 +168,49 @@ type ParseDataRequestResult<
         : undefined;
 };
 
+const validateContentType = (context: Context): void => {
+    const contentType = context.request.get("Content-Type");
+
+    if (contentType === "") {
+        throw new InputValidationError("Unsupported Media Type", [
+            {
+                status: "415",
+                code: "unsupported_media_type",
+                title: "Unsupported Media Type",
+                detail: `Media type is missing, use 'application/vnd.api+json'`,
+            },
+        ]);
+    }
+
+    const parts = contentTypeUtil.parse(contentType);
+
+    if (parts.type !== "application/vnd.api+json") {
+        throw new InputValidationError("Unsupported Media Type", [
+            {
+                status: "415",
+                code: "unsupported_media_type",
+                title: "Unsupported Media Type",
+                detail: `Unsupported media type '${parts.type}', use 'application/vnd.api+json'`,
+            },
+        ]);
+    }
+
+    const { ext, profile, ...rest } = parts.parameters;
+
+    if (Object.keys(rest).length === 0) {
+        return;
+    }
+
+    throw new InputValidationError("Unsupported Media Type", [
+        {
+            status: "415",
+            code: "unsupported_media_type",
+            title: "Unsupported Media Type",
+            detail: `Unknown media type parameters: ${Object.keys(rest).join(", ")}`,
+        },
+    ]);
+};
+
 const parseDataRequest = <
     TIdSchema extends z.ZodType<unknown>,
     TType extends string,
@@ -177,6 +221,8 @@ const parseDataRequest = <
     koaContext: Context,
     options: ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>,
 ): ParseDataRequestResult<TIdSchema, TType, TAttributesSchema, TRelationshipsSchema> => {
+    validateContentType(koaContext);
+
     const parseResult = z
         .object({
             data: z.object({
