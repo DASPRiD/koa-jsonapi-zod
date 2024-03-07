@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.0...v1.4.1) (2024-03-07)
+
+
+### Bug Fixes
+
+* **middleware:** strip leading and trailing underlines from HttpError codes ([8e6b734](https://github.com/dasprid/koa-jsonapi-zod/commit/8e6b7346c70cffca28f7686615fde2c388c480cd))
+
 # [1.4.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.3.2...v1.4.0) (2024-03-04)
 
 
