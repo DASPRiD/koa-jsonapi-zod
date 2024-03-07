@@ -37,7 +37,8 @@ export const jsonApiErrorMiddleware = (options?: ErrorMiddlewareOptions): Middle
                     status: error.status.toString(),
                     code: error.name
                         .replace(/Error$/, "")
-                        .replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`),
+                        .replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+                        .replace(/^_+|_+$/g, ""),
                     title: error.message,
                 });
 
