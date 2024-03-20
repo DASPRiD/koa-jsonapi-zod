@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.3...v1.4.4) (2024-03-20)
+
+
+### Bug Fixes
+
+* **serializer:** inject provided top level links into JSON:API document ([7754e4d](https://github.com/dasprid/koa-jsonapi-zod/commit/7754e4d9cf5d158ceeeb3f96c1ea6cc2395d0552))
+
 ## [1.4.3](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.2...v1.4.3) (2024-03-20)
 
 
