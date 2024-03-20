@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.2...v1.4.3) (2024-03-20)
+
+
+### Bug Fixes
+
+* **request:** build parameter name from deep path for ZodValidationError ([d250bb5](https://github.com/dasprid/koa-jsonapi-zod/commit/d250bb572b344ad35035dc798d3784304494db6c))
+
 ## [1.4.2](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.1...v1.4.2) (2024-03-20)
 
 
