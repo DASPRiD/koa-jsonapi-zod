@@ -1,4 +1,4 @@
-import { JsonApiBody } from "./body.js";
+import { JsonApiBody, type TopLevelLinks } from "./body.js";
 import type {
     Attributes,
     Links,
@@ -99,7 +99,7 @@ export type SerializeManagerOptions<TContext = undefined, TSideloaded = undefine
     fields?: Record<string, string[]>;
     include?: string[];
     meta?: Meta;
-    links?: Links;
+    links?: TopLevelLinks;
     extensions?: string[];
     profiles?: string[];
     sideloaded?: TSideloaded;
@@ -178,6 +178,7 @@ export class SerializeManager<
             {
                 data,
                 meta: options?.meta,
+                links: options?.links,
                 included: included?.toJson(),
             },
             {

@@ -15,7 +15,9 @@ export type JsonApiError = {
     meta?: Meta;
 };
 
-type TopLevelLinks = Links<"self" | "related" | "describedby" | "first" | "last" | "prev" | "next">;
+export type TopLevelLinks = Links<
+    "self" | "related" | "describedby" | "first" | "last" | "prev" | "next"
+>;
 
 type OptionalTopLevelMembers = {
     links?: TopLevelLinks;
