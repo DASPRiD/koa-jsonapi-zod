@@ -150,7 +150,7 @@ type ParseDataRequestOptions<
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 > = {
     type: TType;
-    attributesSchema: TAttributesSchema;
+    attributesSchema?: TAttributesSchema;
     relationshipsSchema?: TRelationshipsSchema;
 };
 
@@ -214,7 +214,7 @@ const validateContentType = (context: Context): void => {
 const parseDataRequest = <
     TIdSchema extends z.ZodType<unknown>,
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject,
+    TAttributesSchema extends z.SomeZodObject | undefined,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 >(
     idSchema: TIdSchema,
@@ -276,7 +276,7 @@ export type ParseCreateRequestResult<
 
 export const parseCreateRequest = <
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject,
+    TAttributesSchema extends z.SomeZodObject | undefined,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 >(
     koaContext: Context,
@@ -287,14 +287,14 @@ export const parseCreateRequest = <
 
 export type ParseUpdateRequestOptions<
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject,
+    TAttributesSchema extends z.SomeZodObject | undefined,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 > = ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>;
 
 export type ParseUpdateRequestResult<
     TId extends string,
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject,
+    TAttributesSchema extends z.SomeZodObject | undefined,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 > = ParseDataRequestResult<z.ZodType<TId>, TType, TAttributesSchema, TRelationshipsSchema> & {
     id: TId;
@@ -303,7 +303,7 @@ export type ParseUpdateRequestResult<
 export const parseUpdateRequest = <
     TId extends string,
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject,
+    TAttributesSchema extends z.SomeZodObject | undefined,
     TRelationshipsSchema extends z.SomeZodObject | undefined,
 >(
     id: TId,
