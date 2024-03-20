@@ -81,11 +81,12 @@ export class ZodValidationError extends InputValidationError {
             return { pointer: `/${path.join("/")}` };
         }
 
-        if (path.length !== 1 || typeof path[0] !== "string") {
-            throw new Error("Query parameters paths must be a single string");
-        }
-
-        return { parameter: path[0] };
+        return {
+            parameter: `${path[0]}${path
+                .slice(1)
+                .map((element) => `[${element}]`)
+                .join()}`,
+        };
     }
 }
 
