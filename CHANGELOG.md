@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.1...v1.4.2) (2024-03-20)
+
+
+### Bug Fixes
+
+* **request:** allow omitting attributes schema ([7f58d51](https://github.com/dasprid/koa-jsonapi-zod/commit/7f58d517329e5c28f6049f210325d2e73095c5b2))
+
 ## [1.4.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.0...v1.4.1) (2024-03-07)
 
 
