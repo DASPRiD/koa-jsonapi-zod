@@ -11,7 +11,7 @@ export type LinkObject = {
 };
 
 export type Link = LinkObject | string;
-export type Links<TKey extends string = string> = Record<TKey, Link | null>;
+export type Links<TKey extends string = string> = Partial<Record<TKey, Link | null>>;
 
 export type Attributes = Record<string, unknown>;
 export type Relationships = Record<string, Relationship>;
