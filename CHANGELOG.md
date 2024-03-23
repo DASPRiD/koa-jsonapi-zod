@@ -1,3 +1,10 @@
+## [1.4.5](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.4...v1.4.5) (2024-03-23)
+
+
+### Bug Fixes
+
+* **common:** make links object partial ([535aac4](https://github.com/dasprid/koa-jsonapi-zod/commit/535aac48ceb47b0323874f258de26dbc9694a271))
+
 ## [1.4.4](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.3...v1.4.4) (2024-03-20)
 
 
