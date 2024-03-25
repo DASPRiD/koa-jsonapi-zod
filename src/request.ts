@@ -364,10 +364,8 @@ type ParseListQueryOptions<
 };
 
 type OptionalSchema<T extends z.ZodType<unknown> | undefined> = T extends z.ZodType<unknown>
-    ? z.ZodOptional<T>
+    ? T
     : z.ZodUndefined;
-
-type OptionalOutput<T extends z.ZodType<unknown> | undefined> = z.output<OptionalSchema<T>>;
 
 type ParseListQueryResult<
     TContext,
@@ -376,8 +374,8 @@ type ParseListQueryResult<
     TPageSchema extends z.ZodType<unknown> | undefined,
 > = ParseBaseQueryResult<TContext> & {
     sort?: Sort<TSort>;
-    filter?: OptionalOutput<TFilterSchema>;
-    page?: OptionalOutput<TPageSchema>;
+    filter: z.output<OptionalSchema<TFilterSchema>>;
+    page: z.output<OptionalSchema<TPageSchema>>;
 };
 
 const processSort = <TSort extends string>(
@@ -450,7 +448,7 @@ export const parseBaseQuery = <TContext = undefined>(
 };
 
 type MergedListQuerySchema<
-    TFilterSchema extends z.ZodType<unknown> | undefined,
+    TFilterSchema extends z.ZodType<unknown> | undefined = undefined,
     TPageSchema extends z.ZodType<unknown> | undefined = undefined,
 > = ReturnType<
     typeof listQuerySchema.extend<{
@@ -466,12 +464,8 @@ const getListQuerySchema = <
     options?: ParseListQueryOptions<unknown, string, TFilterSchema, TPageSchema>,
 ): MergedListQuerySchema<TFilterSchema, TPageSchema> => {
     return listQuerySchema.extend({
-        filter: (options?.filterSchema
-            ? options.filterSchema.optional()
-            : z.undefined()) as OptionalSchema<TFilterSchema>,
-        page: (options?.pageSchema
-            ? options.pageSchema.optional()
-            : z.undefined()) as OptionalSchema<TPageSchema>,
+        filter: (options?.filterSchema ?? z.undefined()) as OptionalSchema<TFilterSchema>,
+        page: (options?.pageSchema ?? z.undefined()) as OptionalSchema<TPageSchema>,
     });
 };
 
