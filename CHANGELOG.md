@@ -1,3 +1,16 @@
+# [2.0.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.5...v2.0.0) (2024-03-25)
+
+
+### Features
+
+* **request:** don't make filter and page parameters optional by default ([d56837f](https://github.com/dasprid/koa-jsonapi-zod/commit/d56837f15598e3eac31bfe42d36220c911c233af))
+
+
+### BREAKING CHANGES
+
+* **request:** when filter or page is defined, it is now required by default.
+To get the old behavior, add `.optional()` to your schemas.
+
 ## [1.4.5](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.4...v1.4.5) (2024-03-23)
 
 
