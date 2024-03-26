@@ -129,10 +129,26 @@ export const resourceIdentifierSchema = <TType extends string>(
         id: z.string(),
     });
 
+type ClientResourceIdentifierSchema<TType extends string> = z.ZodObject<{
+    type: z.ZodType<TType>;
+    lid: z.ZodString;
+}>;
+
+export const clientResourceIdentifierSchema = <TType extends string>(
+    type: TType,
+): ClientResourceIdentifierSchema<TType> =>
+    z.object({
+        type: fixedTypeSchema(type),
+        lid: z.string(),
+    });
+
 type RelationshipDataSchema =
     | ResourceIdentifierSchema<string>
     | z.ZodArray<ResourceIdentifierSchema<string>>
-    | z.ZodNullable<ResourceIdentifierSchema<string>>;
+    | z.ZodNullable<ResourceIdentifierSchema<string>>
+    | ClientResourceIdentifierSchema<string>
+    | z.ZodArray<ClientResourceIdentifierSchema<string>>
+    | z.ZodNullable<ClientResourceIdentifierSchema<string>>;
 
 type RelationshipSchema<TData extends RelationshipDataSchema> = z.ZodObject<{
     data: TData;

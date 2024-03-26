@@ -14,6 +14,7 @@ export {
     parseListQuery,
     relationship,
     resourceIdentifierSchema,
+    clientResourceIdentifierSchema,
     type Sort,
     ZodValidationError,
 } from "./request.js";
