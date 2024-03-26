@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v2.0.0...v2.1.0) (2024-03-26)
+
+
+### Features
+
+* **request:** add clientResourceIdentifierSchema to allow for client created relations ([0550abb](https://github.com/dasprid/koa-jsonapi-zod/commit/0550abba1c7a13a0ecb0c4aa453fa08b1f77d60d))
+
 # [2.0.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v1.4.5...v2.0.0) (2024-03-25)
 
 
