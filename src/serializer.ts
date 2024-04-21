@@ -72,9 +72,9 @@ export type EntitySerializer<TEntity, TReference, TContext = undefined, TSideloa
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: required for inference
-type AnySerializeManager = SerializeManager<any, any>;
+type AnySerializeManager = SerializeManager<any>;
 // biome-ignore lint/suspicious/noExplicitAny: required for inference
-type Serializers<TContext> = Record<string, EntitySerializer<any, any, TContext, any>>;
+type Serializers = Record<string, EntitySerializer<any, any, any, any>>;
 // biome-ignore lint/suspicious/noExplicitAny: required for inference
 type InferEntity<TSerializer> = TSerializer extends EntitySerializer<infer T, any, any, any>
     ? T
@@ -84,18 +84,29 @@ type InferReference<TSerializer> = TSerializer extends EntitySerializer<any, inf
     ? T
     : never;
 // biome-ignore lint/suspicious/noExplicitAny: required for inference
-type InferSideloaded<TSerializer> = TSerializer extends EntitySerializer<any, any, any, infer T>
+type InferContext<TSerializer> = TSerializer extends EntitySerializer<any, any, infer T, any>
     ? T | undefined
     : never;
 // biome-ignore lint/suspicious/noExplicitAny: required for inference
-type InferKeys<TSerializers extends Serializers<any>> = keyof TSerializers & string;
-// biome-ignore lint/suspicious/noExplicitAny: required for inference
-type InferSerializers<TSerializeManager> = TSerializeManager extends SerializeManager<any, infer T>
+type InferSideloaded<TSerializer> = TSerializer extends EntitySerializer<any, any, any, infer T>
+    ? T | undefined
+    : never;
+type InferKeys<TSerializers extends Serializers> = keyof TSerializers & string;
+type InferSerializers<TSerializeManager> = TSerializeManager extends SerializeManager<infer T>
     ? T
     : never;
+type ManagerContext<TSerializers extends Serializers> = {
+    [K in keyof TSerializers]?: InferContext<TSerializers[K]>;
+};
+export type InferManagerContext<TSerializeManager extends AnySerializeManager> = ManagerContext<
+    InferSerializers<TSerializeManager>
+>;
 
-export type SerializeManagerOptions<TContext = undefined, TSideloaded = undefined> = {
-    context?: TContext;
+export type SerializeManagerOptions<
+    TSerializers extends Serializers = Serializers,
+    TSideloaded = undefined,
+> = {
+    context?: ManagerContext<TSerializers>;
     fields?: Record<string, string[]>;
     include?: string[];
     meta?: Meta;
@@ -110,10 +121,7 @@ type SerializeEntityResult = {
     entityRelationships?: EntityRelationships;
 };
 
-export class SerializeManager<
-    TContext = undefined,
-    TSerializers extends Serializers<TContext> = Serializers<TContext>,
-> {
+export class SerializeManager<TSerializers extends Serializers = Serializers> {
     public constructor(private readonly serializers: TSerializers) {
         this.serializers = serializers;
     }
@@ -121,10 +129,10 @@ export class SerializeManager<
     public createResourceDocument<TType extends InferKeys<TSerializers>>(
         type: TType,
         entity: InferEntity<TSerializers[TType]>,
-        options?: SerializeManagerOptions<TContext, InferSideloaded<TSerializers[TType]>>,
+        options?: SerializeManagerOptions<TSerializers, InferSideloaded<TSerializers[TType]>>,
     ): JsonApiBody {
         const serializeEntityResult = this.serializeEntity(type, entity, options);
-        let included: IncludedCollection<TContext, typeof this> | undefined = undefined;
+        let included: IncludedCollection<TSerializers, typeof this> | undefined = undefined;
 
         if (options?.include && serializeEntityResult.entityRelationships) {
             included = new IncludedCollection(this);
@@ -140,12 +148,12 @@ export class SerializeManager<
     public createMultiResourceDocument<TType extends InferKeys<TSerializers>>(
         type: TType,
         entities: InferEntity<TSerializers[TType]>[],
-        options?: SerializeManagerOptions<TContext, InferSideloaded<TSerializers[TType]>>,
+        options?: SerializeManagerOptions<TSerializers, InferSideloaded<TSerializers[TType]>>,
     ): JsonApiBody {
         const serializeEntityResults = entities.map((entity) =>
             this.serializeEntity(type, entity, options),
         );
-        let included: IncludedCollection<TContext, typeof this> | undefined = undefined;
+        let included: IncludedCollection<TSerializers, typeof this> | undefined = undefined;
 
         if (options?.include) {
             included = new IncludedCollection(this);
@@ -171,8 +179,8 @@ export class SerializeManager<
 
     private createJsonApiBody(
         data: Resource | Resource[] | null,
-        options?: SerializeManagerOptions<TContext, unknown>,
-        included?: IncludedCollection<TContext, this>,
+        options?: SerializeManagerOptions<TSerializers, unknown>,
+        included?: IncludedCollection<TSerializers, this>,
     ): JsonApiBody {
         return new JsonApiBody(
             {
@@ -205,13 +213,13 @@ export class SerializeManager<
     public serializeEntity<TType extends InferKeys<TSerializers>>(
         type: TType,
         entity: InferEntity<TSerializers[TType]>,
-        options?: SerializeManagerOptions<TContext, InferSideloaded<TSerializers[TType]>>,
+        options?: SerializeManagerOptions<TSerializers, InferSideloaded<TSerializers[TType]>>,
     ): SerializeEntityResult {
         const serializerOptions: SerializerOptions<
-            TContext,
+            TSerializers,
             InferSideloaded<TSerializers[TType]>
         > = {
-            context: options?.context,
+            context: options?.context?.[type],
             sideloaded: options?.sideloaded,
         };
 
@@ -307,19 +315,22 @@ export class SerializeManager<
     }
 }
 
-type AddToIncludedCollectionOptions<TContext> = SerializeManagerOptions<TContext> & {
-    include: string[];
-};
+type AddToIncludedCollectionOptions<TSerializers extends Serializers> =
+    SerializeManagerOptions<TSerializers> & {
+        include: string[];
+    };
 
-// biome-ignore lint/suspicious/noExplicitAny: required for inference
-class IncludedCollection<TContext, TSerializeManager extends SerializeManager<TContext, any>> {
+class IncludedCollection<
+    TSerializers extends Serializers,
+    TSerializeManager extends AnySerializeManager,
+> {
     private included = new Map<string, Resource>();
 
     public constructor(private readonly serializeManager: TSerializeManager) {}
 
     public add(
         entityRelationships: EntityRelationships<TSerializeManager>,
-        options: AddToIncludedCollectionOptions<TContext>,
+        options: AddToIncludedCollectionOptions<TSerializers>,
         parentFieldPath = "",
     ): void {
         for (const [field, entityRelationship] of Object.entries(entityRelationships)) {
@@ -360,7 +371,7 @@ class IncludedCollection<TContext, TSerializeManager extends SerializeManager<TC
     private addSingle(
         entityRelationship: EntityRelationship<TSerializeManager>,
         field: string,
-        options: AddToIncludedCollectionOptions<TContext>,
+        options: AddToIncludedCollectionOptions<TSerializers>,
     ): void {
         const id = this.serializeManager.getEntityRelationshipId(entityRelationship);
         const compositeKey = `${entityRelationship.type}:${id}`;

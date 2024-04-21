@@ -357,22 +357,21 @@ const listQuerySchema = baseQuerySchema.extend({
         .optional(),
 });
 
-type ParseBaseQueryOptions<TContext> = {
-    context?: TContext;
+type ParseBaseQueryOptions = {
     defaultFields?: Record<string, string[]>;
     defaultInclude?: string[];
 };
 
-type ParseBaseQueryResult<TContext> = {
-    serializerOptions: SerializeManagerOptions<TContext>;
+type ParseBaseQueryResult = {
+    // biome-ignore lint/suspicious/noExplicitAny: required for inference
+    serializerOptions: SerializeManagerOptions<any>;
 };
 
 type ParseListQueryOptions<
-    TContext,
     TSort extends string,
     TFilterSchema extends z.ZodType<unknown> | undefined,
     TPageSchema extends z.ZodType<unknown> | undefined,
-> = ParseBaseQueryOptions<TContext> & {
+> = ParseBaseQueryOptions & {
     defaultSort?: Sort<TSort>;
     allowedSortFields?: TSort[];
     filterSchema?: TFilterSchema;
@@ -384,11 +383,10 @@ type OptionalSchema<T extends z.ZodType<unknown> | undefined> = T extends z.ZodT
     : z.ZodUndefined;
 
 type ParseListQueryResult<
-    TContext,
     TSort extends string,
     TFilterSchema extends z.ZodType<unknown> | undefined,
     TPageSchema extends z.ZodType<unknown> | undefined,
-> = ParseBaseQueryResult<TContext> & {
+> = ParseBaseQueryResult & {
     sort?: Sort<TSort>;
     filter: z.output<OptionalSchema<TFilterSchema>>;
     page: z.output<OptionalSchema<TPageSchema>>;
@@ -437,14 +435,13 @@ export const parseQuerySchema = <T extends z.ZodType<unknown>>(
     return parseResult.data;
 };
 
-const createSerializerOptions = <TContext>(
+const createSerializerOptions = (
     options:
-        | ParseBaseQueryOptions<TContext>
-        | ParseListQueryOptions<TContext, string, undefined, undefined>
+        | ParseBaseQueryOptions
+        | ParseListQueryOptions<string, undefined, undefined>
         | undefined,
     result: z.output<typeof baseQuerySchema>,
-): SerializeManagerOptions<TContext> => ({
-    context: options?.context,
+): SerializeManagerOptions => ({
     fields: {
         ...options?.defaultFields,
         ...result.fields,
@@ -452,10 +449,10 @@ const createSerializerOptions = <TContext>(
     include: result.include ?? options?.defaultInclude,
 });
 
-export const parseBaseQuery = <TContext = undefined>(
+export const parseBaseQuery = (
     koaContext: Context,
-    options: ParseBaseQueryOptions<TContext>,
-): ParseBaseQueryResult<TContext> => {
+    options: ParseBaseQueryOptions,
+): ParseBaseQueryResult => {
     const result = parseQuerySchema(koaContext, baseQuerySchema);
 
     return {
@@ -477,7 +474,7 @@ const getListQuerySchema = <
     TFilterSchema extends z.ZodType<unknown> | undefined = undefined,
     TPageSchema extends z.ZodType<unknown> | undefined = undefined,
 >(
-    options?: ParseListQueryOptions<unknown, string, TFilterSchema, TPageSchema>,
+    options?: ParseListQueryOptions<string, TFilterSchema, TPageSchema>,
 ): MergedListQuerySchema<TFilterSchema, TPageSchema> => {
     return listQuerySchema.extend({
         filter: (options?.filterSchema ?? z.undefined()) as OptionalSchema<TFilterSchema>,
@@ -486,14 +483,13 @@ const getListQuerySchema = <
 };
 
 export const parseListQuery = <
-    TContext = undefined,
     TSort extends string = string,
     TFilterSchema extends z.ZodType<unknown> | undefined = undefined,
     TPageSchema extends z.ZodType<unknown> | undefined = undefined,
 >(
     koaContext: Context,
-    options?: ParseListQueryOptions<TContext, TSort, TFilterSchema, TPageSchema>,
-): ParseListQueryResult<TContext, TSort, TFilterSchema, TPageSchema> => {
+    options?: ParseListQueryOptions<TSort, TFilterSchema, TPageSchema>,
+): ParseListQueryResult<TSort, TFilterSchema, TPageSchema> => {
     const result = parseQuerySchema(koaContext, getListQuerySchema(options));
 
     return {

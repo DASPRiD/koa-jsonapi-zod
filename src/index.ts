@@ -25,5 +25,6 @@ export {
     type EntitySerializer,
     type SerializerOptions,
     type SerializeManagerOptions,
+    type InferManagerContext,
     SerializeManager,
 } from "./serializer.js";

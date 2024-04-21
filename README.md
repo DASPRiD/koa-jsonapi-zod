@@ -52,9 +52,8 @@ type SerializerContext = {
 };
 ```
 
-You can the define that context as generic parameter in both the `SerializeManager` as well as your `EntitySerializer`
-instances. Since the context is always an optional property, you can then perform checks like this in e.g. your
-`getAttributes()` implementation:
+Each serializer can define its own context, and it will be accessible separately for each serializer. Since the context
+is always an optional property, you can then perform checks like this in e.g. your `getAttributes()` implementation:
 
 ```typescript
 const attributes: Record<string, unknown> = {
@@ -65,6 +64,14 @@ const attributes: Record<string, unknown> = {
 if (options.context?.permissions?.includes("read:secret")) {
     attributes.secret = "super secrtet information";
 }
+```
+
+You can then serialize your entities in the following way:
+
+```typescript
+serializeManager.createResourceDocument("my_entity", entity, {
+    context: {my_entity: {permissions: "foo"}},
+});
 ```
 
 #### Filtering
