@@ -1,3 +1,16 @@
+# [3.0.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v2.1.1...v3.0.0) (2024-04-21)
+
+
+### Features
+
+* introduce per-serializer context ([143b515](https://github.com/dasprid/koa-jsonapi-zod/commit/143b515695cdb263f9fdca8f8a84e297878c814d))
+
+
+### BREAKING CHANGES
+
+* the serializer context is now not global anymore put per
+serializer.
+
 ## [2.1.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v2.1.0...v2.1.1) (2024-04-21)
 
 
