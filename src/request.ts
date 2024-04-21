@@ -163,8 +163,8 @@ export const relationship = <TData extends RelationshipDataSchema>(
 
 type ParseDataRequestOptions<
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject | undefined,
-    TRelationshipsSchema extends z.SomeZodObject | undefined,
+    TAttributesSchema extends z.ZodTypeAny | undefined,
+    TRelationshipsSchema extends z.ZodTypeAny | undefined,
 > = {
     type: TType;
     attributesSchema?: TAttributesSchema;
@@ -174,13 +174,13 @@ type ParseDataRequestOptions<
 type ParseDataRequestResult<
     TIdSchema extends z.ZodType<unknown>,
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject | undefined,
-    TRelationshipsSchema extends z.SomeZodObject | undefined,
+    TAttributesSchema extends z.ZodTypeAny | undefined,
+    TRelationshipsSchema extends z.ZodTypeAny | undefined,
 > = {
     id: z.output<TIdSchema>;
     type: TType;
-    attributes: TAttributesSchema extends z.SomeZodObject ? z.output<TAttributesSchema> : undefined;
-    relationships: TRelationshipsSchema extends z.SomeZodObject
+    attributes: TAttributesSchema extends z.ZodTypeAny ? z.output<TAttributesSchema> : undefined;
+    relationships: TRelationshipsSchema extends z.ZodTypeAny
         ? z.output<TRelationshipsSchema>
         : undefined;
 };
@@ -231,8 +231,8 @@ const validateContentType = (context: Context): void => {
 const parseDataRequest = <
     TIdSchema extends z.ZodType<unknown>,
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject | undefined,
-    TRelationshipsSchema extends z.SomeZodObject | undefined,
+    TAttributesSchema extends z.ZodTypeAny | undefined,
+    TRelationshipsSchema extends z.ZodTypeAny | undefined,
 >(
     idSchema: TIdSchema,
     koaContext: Context,
@@ -246,10 +246,10 @@ const parseDataRequest = <
                 id: idSchema as z.ZodType<unknown>,
                 type: fixedTypeSchema(options.type) as z.ZodType<unknown>,
                 attributes: options.attributesSchema
-                    ? (options.attributesSchema as z.SomeZodObject)
+                    ? (options.attributesSchema as z.ZodTypeAny)
                     : z.undefined(),
                 relationships: options.relationshipsSchema
-                    ? (options.relationshipsSchema as z.SomeZodObject)
+                    ? (options.relationshipsSchema as z.ZodTypeAny)
                     : z.undefined(),
             }),
         })
@@ -262,11 +262,11 @@ const parseDataRequest = <
     return {
         id: parseResult.data.data.id,
         type: parseResult.data.data.type as TType,
-        attributes: parseResult.data.data.attributes as TAttributesSchema extends z.SomeZodObject
+        attributes: parseResult.data.data.attributes as TAttributesSchema extends z.ZodTypeAny
             ? z.output<TAttributesSchema>
             : undefined,
         relationships: parseResult.data.data
-            .relationships as TRelationshipsSchema extends z.SomeZodObject
+            .relationships as TRelationshipsSchema extends z.ZodTypeAny
             ? z.output<TRelationshipsSchema>
             : undefined,
     };
@@ -274,14 +274,14 @@ const parseDataRequest = <
 
 export type ParseCreateRequestOptions<
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject | undefined,
-    TRelationshipsSchema extends z.SomeZodObject | undefined,
+    TAttributesSchema extends z.ZodTypeAny | undefined,
+    TRelationshipsSchema extends z.ZodTypeAny | undefined,
 > = ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>;
 
 export type ParseCreateRequestResult<
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject | undefined,
-    TRelationshipsSchema extends z.SomeZodObject | undefined,
+    TAttributesSchema extends z.ZodTypeAny | undefined,
+    TRelationshipsSchema extends z.ZodTypeAny | undefined,
 > = ParseDataRequestResult<
     z.ZodOptional<z.ZodString>,
     TType,
@@ -293,8 +293,8 @@ export type ParseCreateRequestResult<
 
 export const parseCreateRequest = <
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject | undefined,
-    TRelationshipsSchema extends z.SomeZodObject | undefined,
+    TAttributesSchema extends z.ZodTypeAny | undefined,
+    TRelationshipsSchema extends z.ZodTypeAny | undefined,
 >(
     koaContext: Context,
     options: ParseCreateRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>,
@@ -304,15 +304,15 @@ export const parseCreateRequest = <
 
 export type ParseUpdateRequestOptions<
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject | undefined,
-    TRelationshipsSchema extends z.SomeZodObject | undefined,
+    TAttributesSchema extends z.ZodTypeAny | undefined,
+    TRelationshipsSchema extends z.ZodTypeAny | undefined,
 > = ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema>;
 
 export type ParseUpdateRequestResult<
     TId extends string,
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject | undefined,
-    TRelationshipsSchema extends z.SomeZodObject | undefined,
+    TAttributesSchema extends z.ZodTypeAny | undefined,
+    TRelationshipsSchema extends z.ZodTypeAny | undefined,
 > = ParseDataRequestResult<z.ZodType<TId>, TType, TAttributesSchema, TRelationshipsSchema> & {
     id: TId;
 };
@@ -320,8 +320,8 @@ export type ParseUpdateRequestResult<
 export const parseUpdateRequest = <
     TId extends string,
     TType extends string,
-    TAttributesSchema extends z.SomeZodObject | undefined,
-    TRelationshipsSchema extends z.SomeZodObject | undefined,
+    TAttributesSchema extends z.ZodTypeAny | undefined,
+    TRelationshipsSchema extends z.ZodTypeAny | undefined,
 >(
     id: TId,
     koaContext: Context,
