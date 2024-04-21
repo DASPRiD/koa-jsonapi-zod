@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v2.1.0...v2.1.1) (2024-04-21)
+
+
+### Bug Fixes
+
+* **request:** allow ZodTypeAny to account for effects ([13477d8](https://github.com/dasprid/koa-jsonapi-zod/commit/13477d8b9a6d00e67a49067d81dccfc512a0bf45))
+
 # [2.1.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v2.0.0...v2.1.0) (2024-03-26)
 
 
