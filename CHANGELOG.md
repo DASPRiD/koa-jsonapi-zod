@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.0.0...v3.1.0) (2024-04-27)
+
+
+### Features
+
+* allow passing down additional context through relationships ([13a5a2b](https://github.com/dasprid/koa-jsonapi-zod/commit/13a5a2b561a29fc70f7495933fc68d664b836bdf))
+
 # [3.0.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v2.1.1...v3.0.0) (2024-04-21)
 
 
