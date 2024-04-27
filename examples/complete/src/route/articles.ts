@@ -7,7 +7,7 @@ import {
     relationship,
     resourceIdentifierSchema,
 } from "koa-jsonapi-zod";
-import type { RouterContext, default as Router } from "koa-tree-router";
+import type { default as Router, RouterContext } from "koa-tree-router";
 import { z } from "zod";
 import { parseBaseQuery } from "../../../../src/index.js";
 import { Article } from "../entity/Article.js";

@@ -1,3 +1,4 @@
+import deepmerge from "deepmerge";
 import { JsonApiBody, type TopLevelLinks } from "./body.js";
 import type {
     Attributes,
@@ -19,7 +20,10 @@ export type EntityRelationship<
     links?: Links<"self" | "related" | string>;
     meta?: Meta;
 } & (
-    | { entity: InferEntity<InferSerializers<TSerializeManager>[TType]> }
+    | {
+          entity: InferEntity<InferSerializers<TSerializeManager>[TType]>;
+          context?: InferManagerContext<TSerializeManager>;
+      }
     | { reference: InferReference<InferSerializers<TSerializeManager>[TType]> }
 );
 
@@ -326,7 +330,9 @@ class IncludedCollection<
 > {
     private included = new Map<string, Resource>();
 
-    public constructor(private readonly serializeManager: TSerializeManager) {}
+    public constructor(private readonly serializeManager: TSerializeManager) {
+        // Intentionally left empty
+    }
 
     public add(
         entityRelationships: EntityRelationships<TSerializeManager>,
@@ -383,7 +389,13 @@ class IncludedCollection<
         const serializeEntityResult = this.serializeManager.serializeEntity(
             entityRelationship.type,
             entityRelationship.entity,
-            { ...options, sideloaded: undefined },
+            {
+                ...options,
+                context: entityRelationship.context
+                    ? deepmerge(options.context ?? {}, entityRelationship.context)
+                    : options.context,
+                sideloaded: undefined,
+            },
         );
 
         this.included.set(compositeKey, serializeEntityResult.resource);

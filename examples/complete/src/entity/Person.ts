@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { ZonedDateTime } from "@js-joda/core";
 import { Entity, PrimaryKey, Property, t } from "@mikro-orm/core";
 import { ZonedDateTimeType } from "mikro-orm-js-joda";

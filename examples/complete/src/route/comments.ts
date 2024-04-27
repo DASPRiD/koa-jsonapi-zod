@@ -1,5 +1,5 @@
 import { parseCreateRequest } from "koa-jsonapi-zod";
-import type { RouterContext, default as Router } from "koa-tree-router";
+import type { default as Router, RouterContext } from "koa-tree-router";
 import { z } from "zod";
 import { JsonApiErrorBody, relationship, resourceIdentifierSchema } from "../../../../src/index.js";
 import { Article } from "../entity/Article.js";

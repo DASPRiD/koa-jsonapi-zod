@@ -74,6 +74,9 @@ serializeManager.createResourceDocument("my_entity", entity, {
 });
 ```
 
+Additionally, when you define a relationship in a serializer as an entity, you can pass down additional context which
+will be merged with the parent context.
+
 #### Filtering
 
 You can add filters to list handlers as well. JSON:API does not define the structure of filters itself, except that the

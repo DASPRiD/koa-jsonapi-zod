@@ -26,7 +26,7 @@ export class InputValidationError extends Error {
         );
 
         if (statusCodes.size === 1) {
-            this.status = parseInt(statusCodes.values().next().value);
+            this.status = Number.parseInt(statusCodes.values().next().value);
             return;
         }
 
@@ -39,7 +39,9 @@ class JsonApiZodErrorParams {
         public readonly code: string,
         public readonly detail?: string,
         public readonly status?: number,
-    ) {}
+    ) {
+        // Intentionally left empty
+    }
 }
 
 export class ZodValidationError extends InputValidationError {

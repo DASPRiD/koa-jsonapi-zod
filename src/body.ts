@@ -48,7 +48,9 @@ export class JsonApiBody {
     public constructor(
         public readonly members: TopLevelMembers,
         public readonly options?: JsonApiBodyOptions,
-    ) {}
+    ) {
+        // Intentionally left empty
+    }
 }
 
 /**

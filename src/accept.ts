@@ -94,7 +94,7 @@ export class AcceptParser {
                     throw new ParserError(`Invalid weight: ${value}`);
                 }
 
-                weight = parseFloat(value);
+                weight = Number.parseFloat(value);
                 continue;
             }
 

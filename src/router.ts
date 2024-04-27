@@ -1,4 +1,4 @@
-import type { OutgoingHttpHeaders } from "http";
+import type { OutgoingHttpHeaders } from "node:http";
 import { JsonApiErrorBody } from "./body.js";
 
 // We need to define the context manually here, otherwise we'll get a TypeScript clash with whatever

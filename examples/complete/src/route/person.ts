@@ -1,5 +1,5 @@
 import { parseCreateRequest } from "koa-jsonapi-zod";
-import type { RouterContext, default as Router } from "koa-tree-router";
+import type { default as Router, RouterContext } from "koa-tree-router";
 import { z } from "zod";
 import { Person } from "../entity/Person.js";
 import { serializeManager } from "../json-api/index.js";
