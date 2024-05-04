@@ -120,15 +120,16 @@ const fixedTypeSchema = <TType extends string>(type: TType) =>
 
 type ResourceIdentifierSchema<TType extends string> = z.ZodObject<{
     type: z.ZodType<TType>;
-    id: z.ZodString;
+    id: z.ZodType<string>;
 }>;
 
 export const resourceIdentifierSchema = <TType extends string>(
     type: TType,
+    idSchema: z.ZodType<string> = z.string(),
 ): ResourceIdentifierSchema<TType> =>
     z.object({
         type: fixedTypeSchema(type),
-        id: z.string(),
+        id: idSchema,
     });
 
 type ClientResourceIdentifierSchema<TType extends string> = z.ZodObject<{
