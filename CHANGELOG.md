@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.1.0...v3.2.0) (2024-05-04)
+
+
+### Features
+
+* **request:** allow setting custom id schema for resource identifiers ([9838f5a](https://github.com/dasprid/koa-jsonapi-zod/commit/9838f5a18fae9bb3eb0aaf8d2c772cb9b064fa01))
+
 # [3.1.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.0.0...v3.1.0) (2024-04-27)
 
 
