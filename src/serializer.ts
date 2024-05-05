@@ -350,7 +350,7 @@ class IncludedCollection<
             }
 
             if (!Array.isArray(entityRelationship)) {
-                this.addSingle(entityRelationship, field, options);
+                this.addSingle(entityRelationship, fullFieldPath, options);
                 continue;
             }
 
