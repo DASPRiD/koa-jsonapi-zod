@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.0...v3.2.1) (2024-05-05)
+
+
+### Bug Fixes
+
+* **serializer:** pass full field path down to single entity relationships ([807e741](https://github.com/dasprid/koa-jsonapi-zod/commit/807e74155c81dd468b05420d854ad66b3ad88554))
+
 # [3.2.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.1.0...v3.2.0) (2024-05-04)
 
 
