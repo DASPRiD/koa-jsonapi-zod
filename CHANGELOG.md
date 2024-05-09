@@ -1,3 +1,10 @@
+## [3.2.2](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.1...v3.2.2) (2024-05-09)
+
+
+### Bug Fixes
+
+* **index:** export TopLevelLinks type ([f7ffd32](https://github.com/dasprid/koa-jsonapi-zod/commit/f7ffd3229d8729db6e11ec81d7fd9cc8ee93be60))
+
 ## [3.2.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.0...v3.2.1) (2024-05-05)
 
 
