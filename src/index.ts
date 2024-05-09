@@ -1,4 +1,4 @@
-export { JsonApiBody, JsonApiErrorBody, type JsonApiError } from "./body.js";
+export { JsonApiBody, JsonApiErrorBody, type JsonApiError, type TopLevelLinks } from "./body.js";
 export type { Links, Link } from "./common.js";
 export { jsonApiRequestMiddleware, jsonApiErrorMiddleware } from "./middleware.js";
 export {
