@@ -1,3 +1,10 @@
+## [3.2.3](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.2...v3.2.3) (2024-07-01)
+
+
+### Bug Fixes
+
+* skip whitespace after encountering media type separator without parameters ([16bd1a3](https://github.com/dasprid/koa-jsonapi-zod/commit/16bd1a39863af0512d310bbac22a44cc7825cb77))
+
 ## [3.2.2](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.1...v3.2.2) (2024-05-09)
 
 

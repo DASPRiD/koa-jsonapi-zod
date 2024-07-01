@@ -1,6 +1,6 @@
 {
   "name": "koa-jsonapi-zod",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "JSON:API support for Koa using Zod",
   "type": "module",
   "author": "Ben Scholzen 'DASPRiD'",
