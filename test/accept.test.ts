@@ -39,6 +39,14 @@ describe("AcceptParser", () => {
             ],
         ],
         [
+            "multiple types with spaces",
+            "application/json , application/xml",
+            [
+                { type: "application", subType: "json", parameters: {}, weight: 1, acceptExt: {} },
+                { type: "application", subType: "xml", parameters: {}, weight: 1, acceptExt: {} },
+            ],
+        ],
+        [
             "type with parameter",
             "application/json ; foo=bar",
             [

@@ -78,6 +78,7 @@ export class AcceptParser {
         }
 
         if (this.readSeparator() === ",") {
+            this.skipWhitespace();
             return [{ ...AcceptParser.default, type, subType }, true];
         }
 
