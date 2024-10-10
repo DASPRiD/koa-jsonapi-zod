@@ -1,7 +1,7 @@
 import contentTypeUtil from "content-type";
 import { isHttpError } from "http-errors";
 import type { Middleware, ParameterizedContext } from "koa";
-import { type JsonApiMediaType, getAcceptableMediaTypes } from "./accept.js";
+import { type JsonApiMediaType, ParserError, getAcceptableMediaTypes } from "./accept.js";
 import { JsonApiBody, JsonApiErrorBody } from "./body.js";
 import { InputValidationError } from "./request.js";
 
@@ -13,9 +13,36 @@ type JsonApiState = {
 
 export const jsonApiRequestMiddleware = (): Middleware<JsonApiState> => {
     return async (context, next) => {
-        context.state.jsonApi = {
-            acceptableTypes: getAcceptableMediaTypes(context.get("Accept")),
-        };
+        try {
+            context.state.jsonApi = {
+                acceptableTypes: getAcceptableMediaTypes(context.get("Accept")),
+            };
+        } catch (error) {
+            if (!(error instanceof ParserError)) {
+                throw error;
+            }
+
+            context.status = 400;
+            context.set(
+                "Content-Type",
+                contentTypeUtil.format({ type: "application/vnd.api+json" }),
+            );
+            context.body = {
+                jsonapi: { version: "1.1" },
+                errors: [
+                    {
+                        status: "400",
+                        code: "bad_request",
+                        title: "Bad Request",
+                        detail: error.message,
+                        source: {
+                            header: "accept",
+                        },
+                    },
+                ],
+            };
+            return;
+        }
 
         await next();
         handleResponse(context);
