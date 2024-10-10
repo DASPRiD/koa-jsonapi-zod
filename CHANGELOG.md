@@ -1,3 +1,10 @@
+## [3.2.4](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.3...v3.2.4) (2024-10-10)
+
+
+### Bug Fixes
+
+* **middleware:** return proper 400 response when failing to parse accept header ([95f6220](https://github.com/dasprid/koa-jsonapi-zod/commit/95f6220c0c7075b1eed192a16478d186f0ecf262))
+
 ## [3.2.3](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.2...v3.2.3) (2024-07-01)
 
 
