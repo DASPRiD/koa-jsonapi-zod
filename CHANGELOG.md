@@ -1,3 +1,10 @@
+## [3.2.5](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.4...v3.2.5) (2024-11-27)
+
+
+### Bug Fixes
+
+* catch custom 400 errors emitted by koa-bodyparser ([6b2a3ac](https://github.com/dasprid/koa-jsonapi-zod/commit/6b2a3ac31b3ec3d2958ee633c2a3485113712366))
+
 ## [3.2.4](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.3...v3.2.4) (2024-10-10)
 
 
