@@ -81,6 +81,19 @@ export const jsonApiErrorMiddleware = (options?: ErrorMiddlewareOptions): Middle
                 return;
             }
 
+            if (error instanceof Error && "status" in error && error.status === 400) {
+                context.status = 400;
+                context.body = new JsonApiErrorBody({
+                    status: "400",
+                    code: "bad_request",
+                    title: "Bad Request",
+                    detail: error.message,
+                });
+
+                options?.logError?.(error, true);
+                return;
+            }
+
             context.status = 500;
             context.body = new JsonApiErrorBody({
                 status: "500",
