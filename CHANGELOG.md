@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.5...v3.3.0) (2025-03-22)
+
+
+### Features
+
+* export resource identifier schema types ([cfd49ed](https://github.com/dasprid/koa-jsonapi-zod/commit/cfd49ed45cc2c56be3a7355046ec3e346dcb61dd))
+
 ## [3.2.5](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.4...v3.2.5) (2024-11-27)
 
 
