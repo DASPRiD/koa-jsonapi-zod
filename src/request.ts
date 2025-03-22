@@ -145,7 +145,7 @@ export const clientResourceIdentifierSchema = <TType extends string>(
         lid: z.string(),
     });
 
-type RelationshipDataSchema =
+export type RelationshipDataSchema =
     | ResourceIdentifierSchema<string>
     | z.ZodArray<ResourceIdentifierSchema<string>>
     | z.ZodNullable<ResourceIdentifierSchema<string>>
@@ -153,7 +153,7 @@ type RelationshipDataSchema =
     | z.ZodArray<ClientResourceIdentifierSchema<string>>
     | z.ZodNullable<ClientResourceIdentifierSchema<string>>;
 
-type RelationshipSchema<TData extends RelationshipDataSchema> = z.ZodObject<{
+export type RelationshipSchema<TData extends RelationshipDataSchema> = z.ZodObject<{
     data: TData;
 }>;
 

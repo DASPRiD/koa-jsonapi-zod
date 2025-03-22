@@ -13,6 +13,8 @@ export {
     parseBaseQuery,
     parseListQuery,
     relationship,
+    type RelationshipSchema,
+    type RelationshipDataSchema,
     type ResourceIdentifierSchema,
     resourceIdentifierSchema,
     type ClientResourceIdentifierSchema,
