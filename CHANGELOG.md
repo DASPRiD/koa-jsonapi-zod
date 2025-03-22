@@ -1,3 +1,10 @@
+# [3.4.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.3.0...v3.4.0) (2025-03-22)
+
+
+### Features
+
+* export relationship schema types ([69973d4](https://github.com/dasprid/koa-jsonapi-zod/commit/69973d43c4dc851f4861f9ccc44aa109b1565adf))
+
 # [3.3.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.2.5...v3.3.0) (2025-03-22)
 
 
