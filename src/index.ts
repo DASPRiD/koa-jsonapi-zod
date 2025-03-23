@@ -4,6 +4,11 @@ export { jsonApiRequestMiddleware, jsonApiErrorMiddleware } from "./middleware.j
 export {
     type FieldSort,
     InputValidationError,
+    IncludedResourceMap,
+    type IncludedTypeSchemas,
+    type IncludedTypesContainer,
+    type IncludedResource,
+    type IncludedResourceSchemas,
     type ParseCreateRequestResult,
     type ParseCreateRequestOptions,
     type ParseUpdateRequestResult,

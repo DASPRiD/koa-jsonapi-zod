@@ -168,17 +168,17 @@ type ParseDataRequestOptions<
     TType extends string,
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
-    TIncludedTypes extends ParseIncludedTypes | undefined,
+    TIncludedTypeSchemas extends IncludedTypeSchemas | undefined,
 > = {
     type: TType;
     attributesSchema?: TAttributesSchema;
     relationshipsSchema?: TRelationshipsSchema;
-    includedTypes: TIncludedTypes;
+    includedTypeSchemas: TIncludedTypeSchemas;
 };
 
-type IncludedResource<
+export type IncludedResource<
     // biome-ignore lint/suspicious/noExplicitAny: required for inference
-    TOptions extends ParseIncludedResource<any, any>,
+    TOptions extends IncludedResourceSchemas<any, any>,
 > = {
     attributes: TOptions["attributesSchema"] extends z.ZodTypeAny
         ? z.output<TOptions["attributesSchema"]>
@@ -190,7 +190,7 @@ type IncludedResource<
 
 export class IncludedResourceMap<
     // biome-ignore lint/suspicious/noExplicitAny: required for inference
-    TResourceOptions extends ParseIncludedResource<any, any>,
+    TResourceOptions extends IncludedResourceSchemas<any, any>,
 > {
     private readonly type: string;
     private resources = new Map<string, IncludedResource<TResourceOptions>>();
@@ -228,7 +228,7 @@ export class IncludedResourceMap<
     }
 }
 
-type IncludedTypesContainer<T extends ParseIncludedTypes> = {
+export type IncludedTypesContainer<T extends IncludedTypeSchemas> = {
     [K in keyof T]: IncludedResourceMap<T[K]>;
 };
 
@@ -237,7 +237,7 @@ type ParseDataRequestResult<
     TType extends string,
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
-    TIncludedTypesOptions extends ParseIncludedTypes | undefined,
+    TIncludedTypeSchemas extends IncludedTypeSchemas | undefined,
 > = {
     id: z.output<TIdSchema>;
     type: TType;
@@ -245,8 +245,8 @@ type ParseDataRequestResult<
     relationships: TRelationshipsSchema extends z.ZodTypeAny
         ? z.output<TRelationshipsSchema>
         : undefined;
-    includedTypes: TIncludedTypesOptions extends ParseIncludedTypes
-        ? IncludedTypesContainer<TIncludedTypesOptions>
+    includedTypes: TIncludedTypeSchemas extends IncludedTypeSchemas
+        ? IncludedTypesContainer<TIncludedTypeSchemas>
         : undefined;
 };
 
@@ -293,7 +293,7 @@ const validateContentType = (context: Context): void => {
     ]);
 };
 
-type ParseIncludedResource<
+export type IncludedResourceSchemas<
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
 > = {
@@ -301,8 +301,8 @@ type ParseIncludedResource<
     relationshipsSchema?: TRelationshipsSchema;
 };
 
-type ParseIncludedTypes = {
-    [key: string]: ParseIncludedResource<z.ZodTypeAny | undefined, z.ZodTypeAny | undefined>;
+export type IncludedTypeSchemas = {
+    [key: string]: IncludedResourceSchemas<z.ZodTypeAny | undefined, z.ZodTypeAny | undefined>;
 };
 
 type IncludedResourceSchema = z.ZodObject<{
@@ -313,8 +313,8 @@ type IncludedResourceSchema = z.ZodObject<{
 }>;
 type IncludedSchema = z.ZodType<z.output<IncludedResourceSchema>[] | undefined>;
 
-const buildIncludedSchema = <TIncludedTypes extends ParseIncludedTypes | undefined>(
-    includedTypes: TIncludedTypes,
+const buildIncludedSchema = <TIncludedTypeSchemas extends IncludedTypeSchemas | undefined>(
+    includedTypes: TIncludedTypeSchemas,
 ): IncludedSchema => {
     if (!includedTypes) {
         return z.undefined();
@@ -356,7 +356,7 @@ const parseDataRequest = <
     TType extends string,
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
-    TIncludedTypes extends ParseIncludedTypes | undefined,
+    TIncludedTypeSchemas extends IncludedTypeSchemas | undefined,
 >(
     idSchema: TIdSchema,
     koaContext: Context,
@@ -364,18 +364,18 @@ const parseDataRequest = <
         TType,
         TAttributesSchema,
         TRelationshipsSchema,
-        TIncludedTypes
+        TIncludedTypeSchemas
     >,
 ): ParseDataRequestResult<
     TIdSchema,
     TType,
     TAttributesSchema,
     TRelationshipsSchema,
-    TIncludedTypes
+    TIncludedTypeSchemas
 > => {
     validateContentType(koaContext);
 
-    const included = buildIncludedSchema(options.includedTypes);
+    const included = buildIncludedSchema(options.includedTypeSchemas);
 
     const parseResult = z
         .object({
@@ -399,9 +399,9 @@ const parseDataRequest = <
 
     let includedTypes: unknown;
 
-    if (options.includedTypes) {
+    if (options.includedTypeSchemas) {
         const container = Object.fromEntries(
-            Object.entries(options.includedTypes).map(([type]) => [
+            Object.entries(options.includedTypeSchemas).map(([type]) => [
                 type,
                 new IncludedResourceMap(type),
             ]),
@@ -432,8 +432,8 @@ const parseDataRequest = <
             .relationships as TRelationshipsSchema extends z.ZodTypeAny
             ? z.output<TRelationshipsSchema>
             : undefined,
-        includedTypes: includedTypes as TIncludedTypes extends ParseIncludedTypes
-            ? IncludedTypesContainer<TIncludedTypes>
+        includedTypes: includedTypes as TIncludedTypeSchemas extends IncludedTypeSchemas
+            ? IncludedTypesContainer<TIncludedTypeSchemas>
             : undefined,
     };
 };
@@ -442,20 +442,20 @@ export type ParseCreateRequestOptions<
     TType extends string,
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
-    TIncludedTypes extends ParseIncludedTypes | undefined,
-> = ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema, TIncludedTypes>;
+    TIncludedTypeSchemas extends IncludedTypeSchemas | undefined,
+> = ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema, TIncludedTypeSchemas>;
 
 export type ParseCreateRequestResult<
     TType extends string,
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
-    TIncludedTypes extends ParseIncludedTypes | undefined,
+    TIncludedTypeSchemas extends IncludedTypeSchemas | undefined,
 > = ParseDataRequestResult<
     z.ZodOptional<z.ZodString>,
     TType,
     TAttributesSchema,
     TRelationshipsSchema,
-    TIncludedTypes
+    TIncludedTypeSchemas
 > & {
     id?: string;
 };
@@ -464,16 +464,21 @@ export const parseCreateRequest = <
     TType extends string,
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
-    TIncludedTypes extends ParseIncludedTypes | undefined,
+    TIncludedTypeSchemas extends IncludedTypeSchemas | undefined,
 >(
     koaContext: Context,
     options: ParseCreateRequestOptions<
         TType,
         TAttributesSchema,
         TRelationshipsSchema,
-        TIncludedTypes
+        TIncludedTypeSchemas
     >,
-): ParseCreateRequestResult<TType, TAttributesSchema, TRelationshipsSchema, TIncludedTypes> => {
+): ParseCreateRequestResult<
+    TType,
+    TAttributesSchema,
+    TRelationshipsSchema,
+    TIncludedTypeSchemas
+> => {
     return parseDataRequest(z.string().optional(), koaContext, options);
 };
 
@@ -481,21 +486,21 @@ export type ParseUpdateRequestOptions<
     TType extends string,
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
-    TIncludedTypes extends ParseIncludedTypes | undefined,
-> = ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema, TIncludedTypes>;
+    TIncludedTypeSchemas extends IncludedTypeSchemas | undefined,
+> = ParseDataRequestOptions<TType, TAttributesSchema, TRelationshipsSchema, TIncludedTypeSchemas>;
 
 export type ParseUpdateRequestResult<
     TId extends string,
     TType extends string,
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
-    TIncludedTypes extends ParseIncludedTypes | undefined,
+    TIncludedTypeSchemas extends IncludedTypeSchemas | undefined,
 > = ParseDataRequestResult<
     z.ZodType<TId>,
     TType,
     TAttributesSchema,
     TRelationshipsSchema,
-    TIncludedTypes
+    TIncludedTypeSchemas
 > & {
     id: TId;
 };
@@ -505,7 +510,7 @@ export const parseUpdateRequest = <
     TType extends string,
     TAttributesSchema extends z.ZodTypeAny | undefined,
     TRelationshipsSchema extends z.ZodTypeAny | undefined,
-    TIncludedTypes extends ParseIncludedTypes | undefined,
+    TIncludedTypeSchemas extends IncludedTypeSchemas | undefined,
 >(
     id: TId,
     koaContext: Context,
@@ -513,14 +518,14 @@ export const parseUpdateRequest = <
         TType,
         TAttributesSchema,
         TRelationshipsSchema,
-        TIncludedTypes
+        TIncludedTypeSchemas
     >,
 ): ParseUpdateRequestResult<
     TId,
     TType,
     TAttributesSchema,
     TRelationshipsSchema,
-    TIncludedTypes
+    TIncludedTypeSchemas
 > => {
     return parseDataRequest(fixedIdSchema(id), koaContext, options);
 };
