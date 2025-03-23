@@ -1,3 +1,10 @@
+# [3.5.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.4.0...v3.5.0) (2025-03-23)
+
+
+### Features
+
+* **request:** add support for included resources ([6bacc15](https://github.com/dasprid/koa-jsonapi-zod/commit/6bacc1537bbe1f31f118a889387467377fb34545))
+
 # [3.4.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.3.0...v3.4.0) (2025-03-22)
 
 
