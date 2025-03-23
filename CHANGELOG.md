@@ -1,3 +1,10 @@
+## [3.5.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.5.0...v3.5.1) (2025-03-23)
+
+
+### Bug Fixes
+
+* **request:** rename incorrectly named includedTypes to includedTypeSchemas ([f8c1e8e](https://github.com/dasprid/koa-jsonapi-zod/commit/f8c1e8eb40e220505ef7a7ab21ff14a97d216991))
+
 # [3.5.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.4.0...v3.5.0) (2025-03-23)
 
 
