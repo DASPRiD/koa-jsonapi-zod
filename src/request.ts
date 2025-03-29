@@ -173,7 +173,7 @@ type ParseDataRequestOptions<
     type: TType;
     attributesSchema?: TAttributesSchema;
     relationshipsSchema?: TRelationshipsSchema;
-    includedTypeSchemas: TIncludedTypeSchemas;
+    includedTypeSchemas?: TIncludedTypeSchemas;
 };
 
 export type IncludedResource<
