@@ -1,3 +1,10 @@
+## [3.5.2](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.5.1...v3.5.2) (2025-03-29)
+
+
+### Bug Fixes
+
+* make includedTypeSchemas optional ([2edd8a7](https://github.com/dasprid/koa-jsonapi-zod/commit/2edd8a78d0b0a4cc408b2cab7d9991c3b47a39fd))
+
 ## [3.5.1](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.5.0...v3.5.1) (2025-03-23)
 
 
