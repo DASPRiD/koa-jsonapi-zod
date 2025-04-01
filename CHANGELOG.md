@@ -1,3 +1,10 @@
+# [3.6.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.5.2...v3.6.0) (2025-04-01)
+
+
+### Features
+
+* add parseRelationshipUpdateRequest function ([8dd6c19](https://github.com/dasprid/koa-jsonapi-zod/commit/8dd6c190e8e2549e8d0f148eb13b099b6aacd16d))
+
 ## [3.5.2](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.5.1...v3.5.2) (2025-03-29)
 
 
