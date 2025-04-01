@@ -530,6 +530,31 @@ export const parseUpdateRequest = <
     return parseDataRequest(fixedIdSchema(id), koaContext, options);
 };
 
+export const parseRelationshipUpdateRequest = (
+    koaContext: Context,
+    type: string,
+    idSchema: z.ZodType<string, z.ZodTypeDef, unknown> = z.string(),
+): string[] => {
+    validateContentType(koaContext);
+
+    const parseResult = z
+        .object({
+            data: z.array(
+                z.object({
+                    type: z.literal(type),
+                    id: idSchema,
+                }),
+            ),
+        })
+        .safeParse(koaContext.request.body);
+
+    if (!parseResult.success) {
+        throw new ZodValidationError("Validation of body failed", parseResult.error.errors, "body");
+    }
+
+    return parseResult.data.data.map((identifier) => identifier.id);
+};
+
 export type FieldSort<TSort extends string> = { field: TSort; order: "desc" | "asc" };
 export type Sort<TSort extends string> = FieldSort<TSort>[];
 

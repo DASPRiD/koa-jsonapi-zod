@@ -15,6 +15,7 @@ export {
     type ParseUpdateRequestOptions,
     parseCreateRequest,
     parseUpdateRequest,
+    parseRelationshipUpdateRequest,
     parseBaseQuery,
     parseListQuery,
     relationship,
