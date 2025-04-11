@@ -151,7 +151,14 @@ export type RelationshipDataSchema =
     | z.ZodNullable<ResourceIdentifierSchema<string>>
     | ClientResourceIdentifierSchema<string>
     | z.ZodArray<ClientResourceIdentifierSchema<string>>
-    | z.ZodNullable<ClientResourceIdentifierSchema<string>>;
+    | z.ZodNullable<ClientResourceIdentifierSchema<string>>
+    | z.ZodUnion<[ResourceIdentifierSchema<string>, ClientResourceIdentifierSchema<string>]>
+    | z.ZodNullable<
+          z.ZodUnion<[ResourceIdentifierSchema<string>, ClientResourceIdentifierSchema<string>]>
+      >
+    | z.ZodArray<
+          z.ZodUnion<[ResourceIdentifierSchema<string>, ClientResourceIdentifierSchema<string>]>
+      >;
 
 export type RelationshipSchema<TData extends RelationshipDataSchema> = z.ZodObject<{
     data: TData;
