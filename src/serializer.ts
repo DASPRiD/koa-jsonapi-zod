@@ -73,6 +73,14 @@ export type EntitySerializer<TEntity, TReference, TContext = undefined, TSideloa
         entity: TEntity,
         options: SerializerOptions<TContext, TSideloaded>,
     ) => Links<"self" | string> | undefined;
+
+    /**
+     * Get metadata associated with the entity
+     */
+    getMeta?: (
+        entity: TEntity,
+        options: SerializerOptions<TContext, TSideloaded>,
+    ) => Meta | undefined;
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: required for inference
@@ -252,6 +260,7 @@ export class SerializeManager<TSerializers extends Serializers = Serializers> {
                     ? this.filterFields(relationships, options?.fields?.[type])
                     : undefined,
                 links: serializer.getResourceLinks?.(entity, serializerOptions),
+                meta: serializer.getMeta?.(entity, serializerOptions),
             },
             entityRelationships: entityRelationships,
         };
