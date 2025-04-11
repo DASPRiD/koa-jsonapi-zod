@@ -1,3 +1,11 @@
+# [3.7.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.6.0...v3.7.0) (2025-04-11)
+
+
+### Features
+
+* allow associating metadata with entities ([1be3981](https://github.com/dasprid/koa-jsonapi-zod/commit/1be3981a97a1c20ff0c6abb82fc9f11f27d53e04))
+* **request:** allow unions of normal and client resource identifier schemas ([bc1824e](https://github.com/dasprid/koa-jsonapi-zod/commit/bc1824e944d3b44415fbd8bd306e7b9b93c6dad7))
+
 # [3.6.0](https://github.com/dasprid/koa-jsonapi-zod/compare/v3.5.2...v3.6.0) (2025-04-01)
 
 
